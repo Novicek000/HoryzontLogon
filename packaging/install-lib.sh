@@ -12,7 +12,7 @@ REQUIRED_PKGS="greetd labwc python3-pyside6 qt6-qtwayland polkit"
 RECOMMENDED_PKGS="
 greetd-selinux:reguły SELinux dla greetd (Fedora)
 accountsservice:obrazy kont i pełne nazwy użytkowników
-wine-tahoma-fonts:czcionka Tahoma (jak w środowisku Horyzont)
+wine-tahoma-fonts-system:czcionka Tahoma (jak w środowisku Horyzont)
 dejavu-sans-fonts:czcionka zapasowa
 policycoreutils-python-utils:semanage — etykieta SELinux dla katalogu stanu ekranu powitalnego
 "
