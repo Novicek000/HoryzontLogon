@@ -1,0 +1,5 @@
+#!/bin/sh
+# Horyzont — ekran powitalny. Bez greetd użyj: horyzont-greeter --preview (podgląd w oknie)
+PKGDIR="${HORYZONT_GREETER_HOME:-@PKGDIR@}"
+export PYTHONPATH="$PKGDIR${PYTHONPATH:+:$PYTHONPATH}"
+exec python3 -P -m horyzont_greeter greeter "$@"

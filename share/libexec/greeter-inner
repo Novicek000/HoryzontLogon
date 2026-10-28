@@ -1,0 +1,5 @@
+#!/bin/sh
+# Uruchamiane przez labwc: program ekranu powitalnego, a po jego zamknięciu — koniec pracy kompozytora.
+python3 -P -m horyzont_greeter greeter
+echo $? > "$HORYZONT_GREETER_RC"
+labwc --exit 2>/dev/null || kill "$LABWC_PID" 2>/dev/null

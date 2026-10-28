@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<!-- Horyzont — konfiguracja kompozytora dla ekranu powitalnego.
+     Własne skróty i przyciski myszy zastępują domyślne labwc (bez terminala, menu i przełączania okien). -->
+<labwc_config>
+  <core>
+    <decoration>client</decoration>
+    <gap>0</gap>
+  </core>
+  <focus>
+    <followMouse>no</followMouse>
+    <raiseOnFocus>no</raiseOnFocus>
+  </focus>
+  <keyboard>
+    <repeatRate>25</repeatRate>
+    <repeatDelay>600</repeatDelay>
+    <!--NUMLOCK-->
+    <keybind key="W-A-C-S-F24"><action name="None" /></keybind>
+  </keyboard>
+  <mouse>
+    <context name="Client">
+      <mousebind button="Left" action="Press"><action name="Focus" /></mousebind>
+      <mousebind button="Right" action="Press"><action name="Focus" /></mousebind>
+      <mousebind button="Middle" action="Press"><action name="Focus" /></mousebind>
+    </context>
+    <context name="Root">
+      <mousebind button="Right" action="Press"><action name="None" /></mousebind>
+      <mousebind button="Left" action="Press"><action name="None" /></mousebind>
+      <mousebind button="Middle" action="Press"><action name="None" /></mousebind>
+    </context>
+  </mouse>
+  <libinput>
+    <device category="touchpad">
+      <tap>yes</tap>
+      <naturalScroll>no</naturalScroll>
+    </device>
+  </libinput>
+  <windowRules>
+    <windowRule identifier="*" serverDecoration="no" />
+  </windowRules>
+</labwc_config>

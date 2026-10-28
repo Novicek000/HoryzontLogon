@@ -1,0 +1,10 @@
+#!/bin/sh
+# Horyzont — start sesji użytkownika po zalogowaniu na ekranie powitalnym.
+# Jak inne menedżery logowania wczytujemy środowisko powłoki logowania (/etc/profile, ~/.profile, ~/.bash_profile),
+# żeby zmienne użytkownika (PATH, język, programy z ~/.local/bin) działały w sesji graficznej.
+[ $# -gt 0 ] || set -- /bin/bash -l
+case "$(basename "${SHELL:-/bin/sh}")" in
+    bash|zsh|sh|dash|ksh|mksh)
+        exec "$SHELL" -l -c 'exec "$@"' horyzont-session "$@";;
+esac
+exec /bin/bash -l -c 'exec "$@"' horyzont-session "$@"

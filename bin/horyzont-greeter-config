@@ -1,0 +1,5 @@
+#!/bin/sh
+# Horyzont — ustawienia ekranu powitalnego (horyzont-greeter-config --help)
+PKGDIR="${HORYZONT_GREETER_HOME:-@PKGDIR@}"
+export PYTHONPATH="$PKGDIR${PYTHONPATH:+:$PYTHONPATH}"
+exec python3 -P -m horyzont_greeter config "$@"

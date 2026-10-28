@@ -1,0 +1,10 @@
+# Horyzont — konfiguracja greetd (zapisana przez horyzont-greeter-config).
+# Poprzednia konfiguracja: /etc/greetd/config.toml.horyzont-orig
+
+[terminal]
+vt = @VT@
+
+[default_session]
+command = "@LIBEXEC@/start-greeter"
+user = "@USER@"
+@INITIAL@

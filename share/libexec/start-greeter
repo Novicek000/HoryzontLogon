@@ -1,0 +1,63 @@
+#!/bin/sh
+# Horyzont — ekran powitalny. Polecenie uruchamiane przez greetd (sekcja [default_session]
+# w /etc/greetd/config.toml) jako użytkownik greetd: kompozytor labwc + program ekranu powitalnego.
+#
+# Zabezpieczenie: jeśli ekran powitalny trzy razy z rzędu nie wystartuje (np. po nieudanej aktualizacji),
+# zamiast niego pojawia się tekstowe logowanie agreety, żeby dało się zalogować i naprawić system.
+PKGDIR="@PKGDIR@"
+LIBEXEC="@LIBEXEC@"
+export PYTHONPATH="$PKGDIR${PYTHONPATH:+:$PYTHONPATH}"
+export PYTHONDONTWRITEBYTECODE=1
+STATE="${HORYZONT_GREETER_STATE:-/var/lib/horyzont-greeter}"
+CRASHES="$STATE/crashes"
+[ -w "$STATE" ] || CRASHES="/tmp/horyzont-greeter-crashes-$(id -u)"
+LOG="$STATE/greeter.log"
+[ -w "$STATE" ] || LOG="/tmp/horyzont-greeter-$(id -u).log"
+
+now="$(date +%s)"
+count=0; last=0
+[ -f "$CRASHES" ] && read -r count last < "$CRASHES" 2>/dev/null
+case "$count" in ''|*[!0-9]*) count=0;; esac
+case "$last" in ''|*[!0-9]*) last=0;; esac
+[ $((now - last)) -gt 300 ] && count=0
+
+fallback() {
+    printf '\n  Ekran powitalny Horyzont nie może się uruchomić (szczegóły: %s).\n' "$LOG"
+    printf '  Horyzont welcome screen failed to start (details: %s).\n\n' "$LOG"
+    echo 0 0 > "$CRASHES" 2>/dev/null
+    FB_CMD="/bin/bash -l"
+    command -v horyzont-session >/dev/null 2>&1 && FB_CMD="$LIBEXEC/session-wrapper horyzont-session"
+    if command -v agreety >/dev/null 2>&1; then
+        exec agreety --cmd "$FB_CMD"
+    fi
+    sleep 30
+    exit 1
+}
+
+if [ "$count" -ge 3 ] || ! command -v labwc >/dev/null 2>&1; then
+    fallback
+fi
+
+CFG="$(python3 -P -m horyzont_greeter prepare 2>>"$LOG")"
+if [ -z "$CFG" ] || [ ! -d "$CFG" ]; then
+    echo "$((count + 1)) $now" > "$CRASHES" 2>/dev/null
+    exit 1
+fi
+RC_FILE="$CFG/greeter.rc"
+rm -f "$RC_FILE"
+export HORYZONT_GREETER_RC="$RC_FILE"
+{
+    echo "=== $(date '+%F %T') Horyzont greeter $(python3 -P -m horyzont_greeter version 2>/dev/null)"
+    labwc -C "$CFG" -s "$LIBEXEC/greeter-inner"
+} >>"$LOG" 2>&1
+rc="$(cat "$RC_FILE" 2>/dev/null)"
+if [ "$rc" = "0" ]; then
+    echo 0 0 > "$CRASHES" 2>/dev/null
+    exit 0
+fi
+echo "$((count + 1)) $now" > "$CRASHES" 2>/dev/null
+# dziennik nie może rosnąć bez końca
+if [ -f "$LOG" ] && [ "$(wc -c < "$LOG")" -gt 1000000 ]; then
+    tail -c 200000 "$LOG" > "$LOG.tmp" && mv "$LOG.tmp" "$LOG"
+fi
+exit 1

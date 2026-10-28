@@ -1,0 +1,11 @@
+[Unit]
+Description=Ekran powitalny Horyzont — harmonogram aktualizacji
+
+[Timer]
+OnCalendar=*-*-* 03:30:00
+OnBootSec=15min
+Persistent=true
+RandomizedDelaySec=30min
+
+[Install]
+WantedBy=timers.target
